@@ -1,21 +1,7 @@
-// import React from 'react';
-// import './App.css';
-// import Login from './Components/Login/Login.js';
-// import UserList from './Components/UserList/UserList.js';
-// function App() {
-//   return (
-//     <div className="App">
-//       <Login />
-//       <UserList />
-//     </div>
-//   );
-// }
-
-// export default App;
-
 import React from "react";
 import "./App.css";
-import Login from "./Components/Login/Login";
+import Login from "./Components/Login";
+import Logout from "./Components/Logout";
 import UserList from "./Components/UserList/UserList";
 export const AppContext = React.createContext(); // added this
 const initialState = {
@@ -53,7 +39,14 @@ function App() {
       }}
     >
       <div className="App">
-        {!state.isAuthenticated ? <Login /> : <UserList />}
+        {!state.isAuthenticated ? (
+          <Login />
+        ) : (
+          <>
+            <UserList /> 
+            <Logout />
+          </>
+        )}
       </div>
     </AppContext.Provider>
   );

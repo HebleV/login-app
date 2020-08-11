@@ -1,80 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { AppContext } from "../../App";
-import { getUserList } from '../../api';
-import Card from "./Card";
-const initialState = {
-  users: [],
-  isFetching: false,
-  hasError: false,
-};
+import { getUserList } from "../../api";
+import UsersCard from "./UsersCard";
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "FETCH_USER_REQUEST":
-      return {
-        ...state,
-        isFetching: true,
-        hasError: false,
-      };
-    case "FETCH_USER_SUCCESS":
-      return {
-        ...state,
-        isFetching: false,
-        users: action.payload.users,
-      };
-    case "FETCH_USER_ERROR":
-      return {
-        ...state,
-        hasError: true,
-        isFetching: false,
-      };
-    default:
-      return state;
-  }
-};
 export const UserList = () => {
   const { state: authState } = React.useContext(AppContext);
-  console.log({authState});
-  const [state, dispatch] = React.useReducer(reducer, initialState);
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
-  const [hasError, setHasError] = useState(false);;
+  const [hasError, setHasError] = useState(false);
+  const [isFilter, setIsFilter] = useState(false);
+  const handleFilter = () => {
+    const filteredUsersList = users.filter((user) => {
+      return (
+        user.age >= 20 &&
+        user.age < 30 &&
+        (user.firstName + user.lastName).length >= 10
+      );
+    });
+    setIsFilter(true);
+    setFilteredUsers(filteredUsersList);
+  };
+
+  const removeFilter = () => {
+    setFilteredUsers([]);
+    setIsFilter(false);
+  };
   useEffect(() => {
-      const fetchUser = async () => {
-        // dispatch({
-        //     type: "FETCH_USER_REQUEST",
-        // })
-        setIsFetching(true);
-        const response = await getUserList(authState.jwt);
-        console.log({response});
-        setIsFetching(false);
-        if(response.users){
-            // dispatch({
-            //     type: "FETCH_USER_SUCCESS",
-            //     payload: response
-            // })
-            setUsers(response.users);
-        } else {
-            // dispatch({
-            //     type: "FETCH_USER_ERROR",
-            // })
-            setHasError(true);
-        }
+    const fetchUser = async () => {
+      setIsFetching(true);
+      const response = await getUserList(authState.jwt);
+      console.log({ response });
+      setIsFetching(false);
+      if (response.users) {
+        setUsers(response.users);
+      } else {
+        setHasError(true);
       }
-      fetchUser();
-  },[authState.jwt])
+    };
+    fetchUser();
+  }, [authState.jwt]);
+  const usersList = filteredUsers.length > 0 ? filteredUsers : users;
   return (
     <div className="home">
-      {state.isFetching ? (
+      {isFetching ? (
         <span className="loader">LOADING...</span>
-      ) : state.hasError ? (
+      ) : hasError ? (
         <span className="error">AN ERROR HAS OCCURED</span>
       ) : (
         <>
-          {state.users.length > 0 &&
-            state.users.map((user) => (
-              <Card key={user.accountId} user={user} />
-            ))}
+          {usersList.length > 0 && (
+            <>
+              {usersList.map((user) => (
+                <UsersCard key={user.accountId} user={user} />
+              ))}
+              {!isFilter ? (
+                <button onClick={handleFilter}>Filter</button>
+              ) : (
+                <button onClick={removeFilter}>UnFilter</button>
+              )}
+            </>
+          )}
         </>
       )}
     </div>

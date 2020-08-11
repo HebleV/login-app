@@ -6,7 +6,6 @@ export const login = async (accountId,pswd) => {
         jwt: null,
         message: null,
     };
-
     try {
         const response = await axios.post(url, {
             accountId,

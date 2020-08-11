@@ -1,5 +1,5 @@
 import React from "react";
-export const Card = ({ user }) => {
+export const UsersCard = ({ user }) => {
   return (
     <div className="card">
       <div className="content">
@@ -11,4 +11,4 @@ export const Card = ({ user }) => {
     </div>
   );
 };
-export default Card;
+export default UsersCard;
