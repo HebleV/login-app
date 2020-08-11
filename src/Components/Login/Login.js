@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-
+import { login } from '../../api';
 import { Col, Row } from "reactstrap";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -14,6 +14,10 @@ const Login = () => {
     const handlePassword = (e) => {
         let passwordVal = e.target.value;
         setPassword(passwordVal);
+    }
+
+    const handleClick = () => {
+      login();
     }
 
   return (
@@ -38,7 +42,7 @@ const Login = () => {
       <br />
       <Form.Group as={Row}>
         <Col sm={{ span: 1, offset: 1 }}>
-          <Button type="submit">Sign in</Button>
+          <Button onClick={handleClick}>Sign in</Button>
         </Col>
       </Form.Group>
     </Form>
