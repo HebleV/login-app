@@ -1,35 +1,61 @@
 import axios from 'axios';
 
-export const login = async () => {
+export const login = async (accountId,pswd) => {
     const url = "https://apertum-interview.herokuapp.com/api/user/login";
-    let response = {
-        data: null,
+    let result = {
+        jwt: null,
         message: null,
     };
 
     try {
         const response = await axios.post(url, {
-            accountId: 'admin',
-            pswd: '123456'
+            accountId,
+            pswd,
           })
-        console.log("login -> response", response)
-        const jwt = await response.data;
-        console.log({jwt});
-        const token = jwt.token;
-        console.log('jwt',jwt);
-        response.jwt = jwt;
-        response.message = jwt.message;
-        
+        const data = await response.data;
+        result.jwt = data.token;
+        result.message = data.message;        
     } catch (error) {
         console.log('error: ', error);
+        result.jwt = null;
+        result.message = error;
     }
-    getLoginStatus();
+   return getLoginStatus(result);
 };
 
-export const getLoginStatus = (jwt) => {
+export const getLoginStatus = ({jwt, message}) => {
     if(jwt){
-        return true;
+        sessionStorage.setItem("token", jwt);
+        return {
+            status: true,
+            message,
+            jwt,
+        };
     } else {
-        return false;
+        return {
+            status: false,
+            error:message,
+        };
     }
+}
+
+export const getUserList = async (jwt) => {
+    const url = "https://apertum-interview.herokuapp.com/api/users";
+    const options = {
+        headers: {'Authorization': `Bearer ${jwt}`}
+    };
+    try {
+        const response = await axios.get(url, options);
+        const data = await response.data;   
+        return {
+            users:data,
+            error: '',
+        }
+    } catch (error) {
+        console.log('error: ', error);
+        return {
+            users:[],
+            error,
+        }
+    } 
 }
