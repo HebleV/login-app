@@ -55,9 +55,9 @@ export const UserList = () => {
                 <UsersCard key={user.accountId} user={user} />
               ))}
               {!isFilter ? (
-                <button onClick={handleFilter}>Filter</button>
+                <a className='filterLink' onClick={handleFilter}>Filter</a>
               ) : (
-                <button onClick={removeFilter}>UnFilter</button>
+                <a className='filterLink' onClick={removeFilter}>Unfilter</a>
               )}
             </>
           )}

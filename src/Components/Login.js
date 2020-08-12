@@ -50,7 +50,7 @@ export const Login = () => {
             </label>
 
             <label htmlFor="pswd">
-              Password
+              Password&nbsp;&nbsp;
               <input
                 type="password"
                 value={data.pswd}
